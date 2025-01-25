@@ -1,4 +1,4 @@
-from .state import stones, victor, vectorize
+from .state import stones, victor, vectorize, full
 
 
 class Arena:
@@ -27,7 +27,7 @@ class Arena:
         assert self.board[i][j] == ' ', f"{i}-{j} is occupied"
         self.board[i][j] = stone
         self.round += 1
-        if winner := victor(stone, self.board):
+        if (winner := victor(self.board)) in stones or full(self.board):
             self.ended = True
         return self.state, [
             reward(self.board, winner=winner)

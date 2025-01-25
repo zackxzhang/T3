@@ -3,7 +3,8 @@ from .hint import State, Board
 
 
 stones = ['x', 'o']
-states = itertools.product(*[[' ', 'x', 'o'] for _ in range(9)])
+states = list(itertools.product(*[[' ', 'x', 'o'] for _ in range(9)]))
+state_0 = tuple(' ' * 9)
 
 
 def opponent(stone: str) -> str:
@@ -57,13 +58,21 @@ def victorious(stone: str, board: Board) -> bool:
         if board[i][0] == board[i][1] == board[i][2] == stone:
             return True
     for j in range(3):
-        if board[i][0] == board[i][1] == board[i][2] == stone:
+        if board[0][j] == board[1][j] == board[2][j] == stone:
             return True
     if board[0][0] == board[1][1] == board[2][2] == stone:
         return True
     if board[2][0] == board[1][1] == board[0][2] == stone:
         return True
     return False
+
+
+def full(board: Board) -> bool:
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == ' ':
+                return False
+    return True
 
 
 def victor(board: Board) -> str:
