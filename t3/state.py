@@ -1,59 +1,45 @@
 import itertools
-from .hint import State, Board
+from .hint import Stone, State, Board, Index, Coord
 
 
-stones = ['x', 'o']
-states = list(itertools.product(*[[' ', 'x', 'o'] for _ in range(9)]))
-state_0 = tuple(' ' * 9)
+states = list(itertools.product(*[list(Stone) for _ in range(9)]))
+state_0 = tuple([Stone._ for _ in range(9)])
 
 
-def opponent(stone: str) -> str:
-    match stone:
-        case 'x':
-            return 'o'
-        case 'o':
-            return 'x'
-        case _:
-            raise ValueError('invalid stone')
-
-
-def matricize(state: State) -> Board:
+def boardify(state: State) -> Board:
     return [list(state[0:3]), list(state[3:6]), list(state[6:9])]
 
 
-def vectorize(board: Board) -> State:
+def statify(board: Board) -> State:
     return (*board[0], *board[1], *board[2])
 
 
-def stringify(state: State) -> str:
-    return ''.join(state)
+def stringify(board: Board) -> str:
+    return '\n'.join(''.join(map(str, row)) for row in board)
 
 
-def tuplify(string: str) -> State:
-    return tuple(string)
-
-
-def ij2k(i: int, j: int):
+def ij2k(ij: Coord) -> Index:
+    i, j = ij
     return i * 3 + j
 
 
-def k2ij(k: int) -> tuple[int, int]:
+def k2ij(k: Index) -> Coord:
     return divmod(k, 3)
 
 
 def affordance(state: State):
     for k, e in enumerate(state):
-        if e == ' ':
+        if not e:
             yield k
 
 
-def transition(state: State, k: int, stone: str):
+def transition(state: State, k: Index, stone: Stone) -> State:
     s = list(state)
     s[k] = stone
     return tuple(s)
 
 
-def victorious(stone: str, board: Board) -> bool:
+def victorious(stone: Stone, board: Board) -> bool:
     for i in range(3):
         if board[i][0] == board[i][1] == board[i][2] == stone:
             return True
@@ -67,16 +53,17 @@ def victorious(stone: str, board: Board) -> bool:
     return False
 
 
-def full(board: Board) -> bool:
+def victor(board: Board) -> Stone:
+    if victorious(Stone.X, board):
+        return Stone.X
+    if victorious(Stone.O, board):
+        return Stone.O
+    return Stone._
+
+
+def impasse(board: Board) -> bool:
     for i in range(3):
         for j in range(3):
-            if board[i][j] == ' ':
+            if not board[i][j]:
                 return False
     return True
-
-
-def victor(board: Board) -> str:
-    for stone in stones:
-        if victorious(stone, board):
-            return stone
-    return ' '
