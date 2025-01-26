@@ -1,14 +1,16 @@
 import functools
 import random
-from .state import states, affordance, transition, k2ij
+from .state import states, state_0, affordance, transition, k2ij
 from .hint import Stone, State, Index, Coord
+from .reward import Reward
 
 
 class Player:
 
-    def __init__(self, stone: Stone):
+    def __init__(self, stone: Stone, reward: type[Reward]):
         self.stone = stone
-        self.state = None
+        self.reward = reward(stone)
+        self.state = state_0
         self.value = {state: 0. for state in states}
         self.alpha = 1e-2
         self.gamma = 1
@@ -23,7 +25,7 @@ class Player:
         return ks_
 
     def act(self, state: State) -> tuple[Stone, Coord]:
-        ks = [k for k in affordance(state)]
+        ks = list(affordance(state))
         if random.uniform(0, 1) < 0.2:
             k = random.choice(ks)
         else:
@@ -35,9 +37,9 @@ class Player:
                 k = random.choice(ks)
         return self.stone, k2ij(k)
 
-    def obs(self, state, reward):
-        # print(f"{self.state} -> {state}")
+    def obs(self, signal: Stone, state: State):
         self.value[self.state] += self.alpha * (
-            reward + self.gamma * self.value[state] - self.value[self.state]
+            self.reward(signal) + self.gamma *
+            self.value[state] - self.value[self.state]
         )
         self.state = state

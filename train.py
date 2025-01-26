@@ -1,26 +1,22 @@
 from t3.state import Stone
-from t3.reward import victory, survival
+from t3.reward import Victory, Survival
 from t3.player import Player
 from t3.game import Game
 
 
 players = [
-    Player(Stone.X),
-    Player(Stone.O),
-]
-reward_functions = [
-    victory(players[0]),
-    survival(players[1]),
+    Player(Stone.X, Victory),
+    Player(Stone.O, Survival),
 ]
 
-for _ in range(8):
-    game = Game(players, reward_functions)
+for _ in range(100):
+    game = Game(players)
     while True:
-        player = players[game.round % 2]
+        player = game.player
         action = player.act(game.state)
-        rewards = game.evo(action)
-        for player, reward in zip(players, rewards):
-            player.obs(game.state, reward)
+        signal = game.evo(action)
+        for player in players:
+            player.obs(signal, game.state)
         if game.winner:
             print('')
             print(game)
