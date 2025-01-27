@@ -1,4 +1,4 @@
-import itertools
+import itertools, functools
 from .hint import Stone, State, Board, Index, Coord
 
 
@@ -18,28 +18,31 @@ def stringify(board: Board) -> str:
     return '\n'.join(''.join(map(str, row)) for row in board)
 
 
-def ij2k(ij: Coord) -> Index:
-    i, j = ij
-    return i * 3 + j
+# def ij2k(ij: Coord) -> Index:
+#     i, j = ij
+#     return i * 3 + j
 
 
-def k2ij(k: Index) -> Coord:
-    return divmod(k, 3)
+# def k2ij(k: Index) -> Coord:
+#     return divmod(k, 3)
 
 
-def affordance(state: State):
-    for k, e in enumerate(state):
-        if not e:
-            yield k
+def affordance(state: State) -> list[Index]:
+    return [k for k, e in enumerate(state) if not e]
 
 
-def transition(state: State, k: Index, stone: Stone) -> State:
+def transition(state: State, stone: Stone, k: Index) -> State:
     s = list(state)
     s[k] = stone
     return tuple(s)
 
 
-def victorious(stone: Stone, board: Board) -> bool:
+def transitions(state: State, stone: Stone) -> list[State]:
+    return [transition(state, stone, k) for k in affordance(state)]
+
+
+def victorious(state: State, stone: Stone) -> bool:
+    board = boardify(state)
     for i in range(3):
         if board[i][0] == board[i][1] == board[i][2] == stone:
             return True
@@ -53,17 +56,19 @@ def victorious(stone: Stone, board: Board) -> bool:
     return False
 
 
-def victor(board: Board) -> Stone:
-    if victorious(Stone.X, board):
-        return Stone.X
-    if victorious(Stone.O, board):
-        return Stone.O
-    return Stone._
-
-
-def impasse(board: Board) -> bool:
-    for i in range(3):
-        for j in range(3):
-            if not board[i][j]:
-                return False
+def impasse(state: State) -> bool:
+    for s in state:
+        if not s:
+            return False
     return True
+
+
+@functools.cache
+def judge(state: State) -> Stone:
+    if victorious(state, Stone.X):
+        return Stone.X
+    if victorious(state, Stone.O):
+        return Stone.O
+    if impasse(state):
+        return Stone.X | Stone.O
+    return Stone._

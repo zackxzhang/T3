@@ -1,7 +1,7 @@
 import functools
 import random
-from .state import states, state_0, affordance, transition, k2ij
-from .hint import Stone, State, Index, Coord
+from .state import states, state_0, transitions, judge
+from .hint import Stone, State
 from .reward import Reward
 
 
@@ -15,31 +15,30 @@ class Player:
         self.alpha = 1e-2
         self.gamma = 1
 
-    def top(self, ks: list[Index], ss: list[State]) -> list[Index]:
-        vs = [self.value[s] for s in ss]
-        mv = max(vs)
-        ks_ = list()
-        for k, v in zip(ks, vs):
-            if v >= mv:
-                ks_.append(k)
-        return ks_
+    def top(self, actions: list[State]) -> list[State]:
+        rewards = [self.reward(judge(a)) for a in actions]
+        values = [self.value[a] for a in actions]
+        bar = max(r + self.gamma * v for r, v in zip(rewards, values))
+        return [
+            a for a, r, v in zip(actions, rewards, values)
+            if r + self.gamma * v >= bar
+        ]
 
-    def act(self, state: State) -> tuple[Stone, Coord]:
-        ks = list(affordance(state))
+    def act(self, state: State) -> State:
+        actions = transitions(state, self.stone)
         if random.uniform(0, 1) < 0.2:
-            k = random.choice(ks)
+            action = random.choice(actions)
         else:
-            ss = [transition(state, k, self.stone) for k in ks]
-            ks = self.top(ks, ss)
-            if len(ks) == 1:
-                k = ks[0]
+            actions = self.top(actions)
+            if len(actions) == 1:
+                action = actions[0]
             else:
-                k = random.choice(ks)
-        return self.stone, k2ij(k)
+                action = random.choice(actions)
+        return action
 
-    def obs(self, signal: Stone, state: State):
+    def obs(self, winner: Stone, state: State):
         self.value[self.state] += self.alpha * (
-            self.reward(signal) + self.gamma *
+            self.reward(winner) + self.gamma *
             self.value[state] - self.value[self.state]
         )
         self.state = state
