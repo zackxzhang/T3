@@ -14,10 +14,10 @@ for _ in range(100):
     while True:
         player = game.player
         action = player.act(game.state)
-        signal = game.evo(action)
+        winner = game.evo(action)
         for player in players:
-            player.obs(signal, game.state)
-        if game.winner:
+            player.obs(winner, game.state)
+        if winner:
             print('')
             print(game)
             break
