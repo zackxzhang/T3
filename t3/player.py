@@ -1,19 +1,44 @@
 import functools
+import json
 import random
-from .state import states, state_0, transitions, judge
-from .hint import Stone, State
-from .reward import Reward
+from .struct import Stone, State, Value
+from .state import states, transitions, judge
+from .reward import Reward, decode_reward
+from .value import make_value, encode_value, decode_value
 
 
 class Player:
 
-    def __init__(self, stone: Stone, reward: type[Reward]):
+    def __init__(
+        self,
+        stone: Stone,
+        reward: type[Reward],
+        value: Value | None = None,
+    ):
         self.stone = stone
         self.reward = reward(stone)
-        self.state = state_0
-        self.value = {state: 0. for state in states}
+        self.value = value if value else make_value()
         self.alpha = 1e-2
         self.gamma = 1
+        self.state: State
+
+    def save(self, file):
+        data = {
+            'stone': str(self.stone),
+            'reward': self.reward.name,
+            'value': encode_value(self.value),
+        }
+        with open(file, 'w') as f:
+            json.dump(data, f)
+
+    @classmethod
+    def load(cls, file):
+        with open(file, 'r') as f:
+            data = json.load(f)
+        stone = Stone[data['stone']]
+        reward = decode_reward(data['reward'])(stone)
+        value = decode_value(data['value'])
+        return cls(stone, reward, value)
 
     def top(self, actions: list[State]) -> list[State]:
         rewards = [self.reward(judge(a)) for a in actions]

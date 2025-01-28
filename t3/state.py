@@ -1,30 +1,33 @@
 import itertools, functools
-from .hint import Stone, State, Board, Index, Coord
+from .struct import Stone, State, Board, Index, Coord
 
 
 states = list(itertools.product(*[list(Stone) for _ in range(9)]))
 state_0 = tuple([Stone._ for _ in range(9)])
 
 
-def boardify(state: State) -> Board:
-    return [list(state[0:3]), list(state[3:6]), list(state[6:9])]
-
-
 def statify(board: Board) -> State:
     return (*board[0], *board[1], *board[2])
+
+
+def boardify(state: State) -> Board:
+    return [list(state[0:3]), list(state[3:6]), list(state[6:9])]
 
 
 def stringify(board: Board) -> str:
     return '\n'.join(''.join(map(str, row)) for row in board)
 
 
-# def ij2k(ij: Coord) -> Index:
-#     i, j = ij
-#     return i * 3 + j
+def plot(state: State) -> str:
+    return stringify(boardify(state))
 
 
-# def k2ij(k: Index) -> Coord:
-#     return divmod(k, 3)
+def encode_state(state: State) -> str:
+    return ''.join(map(str, state))
+
+
+def decode_state(string: str) -> State:
+    return tuple(map(Stone.__getitem__, string))
 
 
 def affordance(state: State) -> list[Index]:

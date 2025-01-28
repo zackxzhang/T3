@@ -1,4 +1,4 @@
-from t3.state import Stone
+from t3.state import Stone, states, plot
 from t3.reward import Victory, Survival
 from t3.player import Player
 from t3.game import Game
@@ -19,11 +19,19 @@ for _ in range(100):
             player.obs(winner, game.state)
         if winner:
             print('')
-            print(game)
+            print(plot(game.state))
             break
 
 for player in players:
     print('='*64)
-    for s, v in player.value.items():
-        if v != 0.:
-            print(f"{s}: {v}")
+    states_ = sorted(states, key=player.value.__getitem__)
+    for s in states_[:10]:
+        print('')
+        print(f"{plot(s)} : {player.value[s]}")
+    for s in states_[-10:]:
+        print('')
+        print(f"{plot(s)} : {player.value[s]}")
+
+
+players[0].save('player.json')
+print(type(Player.load('player.json')))
