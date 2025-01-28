@@ -14,7 +14,19 @@ class Stone(Flag):
         return self.name
 
 
-State = tuple[Stone, ...]
 Board = list[list[Stone]]
+State = tuple[Stone, ...]
+Value = dict[State, float]
+
+
 Index = int
 Coord = tuple[int, int]
+
+
+def ij2k(ij: Coord) -> Index:
+    i, j = ij
+    return i * 3 + j
+
+
+def k2ij(k: Index) -> Coord:
+    return divmod(k, 3)

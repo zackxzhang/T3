@@ -1,6 +1,6 @@
-from .state import state_0, boardify, stringify, judge
+from .struct import Stone, State
+from .state import state_0, judge
 from .player import Player
-from .hint import Stone, State, Board
 
 
 class Game:
@@ -17,13 +17,6 @@ class Game:
     @property
     def player(self) -> Player:
         return self.players[self.round % 2]
-
-    @property
-    def board(self) -> Board:
-        return boardify(self.state)
-
-    def __str__(self) -> str:
-        return stringify(self.board)
 
     def evo(self, action: State):
         assert not self.winner, "game is ended"
