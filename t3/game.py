@@ -5,7 +5,7 @@ from .player import Player
 
 class Game:
 
-    def __init__(self, players: list[Player]):
+    def __init__(self, players: tuple[Player, Player]):
         for player in players:
             player.state = state_0
         self.players = players
