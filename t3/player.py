@@ -1,13 +1,43 @@
 import functools
 import json
 import random
+from abc import ABC, abstractmethod
 from .struct import Stone, State, Value
 from .state import states, transitions, judge
 from .reward import Reward, decode_reward
 from .value import make_value, encode_value, decode_value
 
 
-class Player:
+class Player(ABC):
+
+    def __init__(self, stone: Stone, *args, **kwargs):
+        self.stone = stone
+        self.state: State
+
+    @abstractmethod
+    def act(self, state: State) -> State:
+        ...
+
+    @abstractmethod
+    def obs(self, winner: Stone, state: State):
+        ...
+
+
+class Amateur(Player):
+
+    def __init__(self, stone: Stone):
+        super().__init__(stone)
+
+    def act(self, state: State) -> State:
+        actions = transitions(state, self.stone)
+        action = random.choice(actions)
+        return action
+
+    def obs(self, winner: Stone, state: State):
+        self.state = state
+
+
+class Learner(Player):
 
     def __init__(
         self,
@@ -15,12 +45,11 @@ class Player:
         reward: type[Reward],
         value: Value | None = None,
     ):
-        self.stone = stone
+        super().__init__(stone)
         self.reward = reward(stone)
         self.value = value if value else make_value()
         self.alpha = 1e-2
         self.gamma = 1
-        self.state: State
 
     def save(self, file):
         data = {

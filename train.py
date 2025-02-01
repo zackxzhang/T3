@@ -1,13 +1,13 @@
 from t3.state import Stone, states, plot
 from t3.reward import Victory, Survival
-from t3.player import Player
+from t3.player import Amateur, Learner
 from t3.game import Game
 
 
-players = [
-    Player(Stone.X, Victory),
-    Player(Stone.O, Survival),
-]
+players = (
+    Learner(Stone.X, Victory),
+    Learner(Stone.O, Survival),
+)
 
 for _ in range(100):
     game = Game(players)
@@ -34,4 +34,4 @@ for player in players:
 
 
 players[0].save('player.json')
-print(type(Player.load('player.json')))
+print(type(Learner.load('player.json')))
