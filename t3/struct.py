@@ -30,3 +30,9 @@ def ij2k(ij: Coord) -> Index:
 
 def k2ij(k: Index) -> Coord:
     return divmod(k, 3)
+
+
+class Mode(Flag):
+
+    EXPLORE = 1
+    EXPLOIT = 2
