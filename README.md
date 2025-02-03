@@ -1,11 +1,16 @@
 # T3
 *reinforcement learning for tic tac toe*
 
+##### setup
 - [x] state transition
+- [x] board visualization
+
+##### reinforcement learning
 - [x] value tabulation
 - [x] reward shaping
-- [ ] rate scheduling
-- [ ] importance sampling
-- [ ] tree search
-    - [ ] minimax
-    - [ ] monte carlo
+- [x] rate scheduling
+- [x] importance sampling
+
+##### tree search
+- [ ] minimax
+- [ ] monte carlo
