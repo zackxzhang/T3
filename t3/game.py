@@ -1,3 +1,4 @@
+import threading
 from .struct import Stone, State
 from .state import state_0, judge
 from .player import Player
@@ -25,3 +26,21 @@ class Game:
         self.state = action
         self.round += 1
         return self.winner
+
+
+class Arbiter:
+
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.wins = [0, 0, 0]
+
+    def __call__(self, winner: Stone):
+        with self.lock:
+            if winner == Stone.X | Stone.O:
+                self.wins[0] += 1
+            elif winner == Stone.X:
+                self.wins[1] += 1
+            elif winner == Stone.O:
+                self.wins[2] += 1
+            else:
+                raise AttributeError('no winner yet')
