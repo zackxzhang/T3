@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from itertools import chain
 from math import pi, cos
 
 
@@ -11,6 +12,9 @@ class Schedule(ABC):
     def __call__(self) -> float:
         self.step()
         return self.a  # type: ignore[attr-defined]
+
+    # concatenate schedules by overloading +
+    # chain iterators?
 
 
 class ConstantSchedule(Schedule):

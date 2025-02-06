@@ -7,23 +7,27 @@ from .player import Player
 class Game:
 
     def __init__(self, players: tuple[Player, Player]):
-        for player in players:
-            player.state = state_0
         self.players = players
-        self.state = state_0
         self.round = 0
         self.winner = Stone._
-        self.history: list = list()
+        self.trajectory = [state_0]
 
     @property
     def player(self) -> Player:
         return self.players[self.round % 2]
 
+    @property
+    def state(self) -> State:
+        return self.trajectory[-1]
+
+    @property
+    def pre_state(self) -> State:
+        return self.trajectory[-2]
+
     def evo(self, action: State):
         assert not self.winner, "game is ended"
-        self.history.append(action)
+        self.trajectory.append(action)
         self.winner = judge(action)
-        self.state = action
         self.round += 1
         return self.winner
 
@@ -33,6 +37,10 @@ class Arbiter:
     def __init__(self):
         self.lock = threading.Lock()
         self.wins = [0, 0, 0]
+
+    @property
+    def n(self) -> int:
+        return sum(self.wins)
 
     def __call__(self, winner: Stone):
         with self.lock:
@@ -44,3 +52,11 @@ class Arbiter:
                 self.wins[2] += 1
             else:
                 raise AttributeError('no winner yet')
+
+    def __str__(self):
+        return (
+            f'X {self.wins[1]/self.n}\n'
+            f'- {self.wins[0]/self.n}\n'
+            f'O {self.wins[2]/self.n}\n'
+            '--------'
+        )

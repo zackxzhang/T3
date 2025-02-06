@@ -2,13 +2,12 @@ from t3.state import Stone, states, plot
 from t3.value import init_value
 from t3.reward import Victory, Survival
 from t3.player import Amateur, Learner
-from t3.game import Game
+from t3.game import Game, Arbiter
 from t3.optim import CosineSchedule
 
 
 m = 50_000
 n = 80_000
-wins = [0, 0, 0]
 
 p1 = Learner(
     Stone.X, init_value(), Victory,
@@ -23,6 +22,7 @@ p2 = Learner(
 players = (p1, p2)
 
 
+arbiter = Arbiter()
 for _ in range(n):
     game = Game(players)
     while True:
@@ -31,21 +31,12 @@ for _ in range(n):
         winner = game.evo(action)
         if winner:
             for player in players:
-                player.obs(winner, game.state)
-            if winner == Stone.X:
-                wins[1] += 1
-            elif winner == Stone.O:
-                wins[2] += 1
-            else:
-                wins[0] += 1
+                player.obs(winner, game.pre_state, game.state)
+            arbiter(winner)
             break
         else:
-            player.obs(winner, game.state)
-
-print(f'X {wins[1]/n}')
-print(f'- {wins[0]/n}')
-print(f'O {wins[2]/n}')
-print('-' * 8)
+            player.obs(winner, game.pre_state, game.state)
+print(arbiter)
 
 
 for player in players:
