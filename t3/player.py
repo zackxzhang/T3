@@ -1,10 +1,11 @@
 import json
 import random
 from abc import ABC, abstractmethod
-from .struct import Stone, State, Value, Mode
+from math import inf
+from .struct import Stone, State, Mode
 from .state import states, transitions, judge
 from .reward import Reward, decode_reward
-from .value import encode_value, decode_value
+from .value import Value, encode_value, decode_value
 from .optim import Schedule, ConstantSchedule
 
 
@@ -12,7 +13,6 @@ class Player(ABC):
 
     def __init__(self, stone: Stone, *args, **kwargs):
         self.stone = stone
-        self.state: State
         self.mode: Mode
         self.alpha: Schedule
         self.epsilon: Schedule
@@ -24,11 +24,11 @@ class Player(ABC):
 
     @abstractmethod
     def act(self, state: State) -> State:
-        ...
+        pass
 
     @abstractmethod
-    def obs(self, winner: Stone, state: State):
-        ...
+    def obs(self, winner: Stone, state_a: State, state_b: State):
+        pass
 
 
 class Amateur(Player):
@@ -41,8 +41,8 @@ class Amateur(Player):
         action = random.choice(actions)
         return action
 
-    def obs(self, winner: Stone, state: State):
-        self.state = state
+    def obs(self, winner: Stone, state_a: State, state_b: State):
+        pass
 
 
 class Learner(Player):
@@ -80,14 +80,17 @@ class Learner(Player):
         reward = decode_reward(data['reward'])
         return cls(stone, value, reward)
 
-    def top(self, actions: list[State]) -> list[State]:
-        rewards = [self.reward(judge(a)) for a in actions]
-        values = [self.value[a] for a in actions]
-        bar = max(r + self.gamma * v for r, v in zip(rewards, values))
-        return [
-            a for a, r, v in zip(actions, rewards, values)
-            if r + self.gamma * v >= bar
+    def top(self, actions: list[State]) -> State:
+        action_values = [
+            (a, self.reward(judge(a)) + self.gamma * self.value[a])
+            for a in actions
         ]
+        random.shuffle(action_values)
+        best = -inf
+        for a, v in action_values:
+            if v > best:
+                best, action = v, a
+        return action
 
     def act(self, state: State) -> State:
         actions = transitions(state, self.stone)
@@ -96,20 +99,15 @@ class Learner(Player):
             action = random.choice(actions)
         else:
             self.mode = Mode.EXPLOIT
-            actions = self.top(actions)
-            if len(actions) == 1:
-                action = actions[0]
-            else:
-                action = random.choice(actions)
+            action = self.top(actions)
         return action
 
-    def obs(self, winner: Stone, state: State):
+    def obs(self, winner: Stone, state_a: State, state_b: State):
         match self.mode:
             case Mode.EXPLOIT:
-                self.value[self.state] += self.alpha() * (
+                self.value[state_a] += self.alpha() * (
                     self.reward(winner) + self.gamma *
-                    self.value[state] - self.value[self.state]
+                    self.value[state_b] - self.value[state_a]
                 )
             case _:
                 pass
-        self.state = state
