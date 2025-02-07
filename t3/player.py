@@ -13,6 +13,7 @@ class Player(ABC):
 
     def __init__(self, stone: Stone, *args, **kwargs):
         self.stone = stone
+        self.state: State
         self.mode: Mode
         self.alpha: Schedule
         self.epsilon: Schedule
@@ -27,7 +28,7 @@ class Player(ABC):
         pass
 
     @abstractmethod
-    def obs(self, winner: Stone, state_a: State, state_b: State):
+    def obs(self, winner: Stone, state: State):
         pass
 
 
@@ -41,7 +42,7 @@ class Amateur(Player):
         action = random.choice(actions)
         return action
 
-    def obs(self, winner: Stone, state_a: State, state_b: State):
+    def obs(self, winner: Stone, state: State):
         pass
 
 
@@ -102,12 +103,13 @@ class Learner(Player):
             action = self.top(actions)
         return action
 
-    def obs(self, winner: Stone, state_a: State, state_b: State):
+    def obs(self, winner: Stone, state: State):
         match self.mode:
             case Mode.EXPLOIT:
-                self.value[state_a] += self.alpha() * (
+                self.value[self.state] += self.alpha() * (
                     self.reward(winner) + self.gamma *
-                    self.value[state_b] - self.value[state_a]
+                    self.value[state] - self.value[self.state]
                 )
             case _:
                 pass
+        self.state = state

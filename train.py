@@ -12,13 +12,13 @@ n = 80_000
 
 p1 = Learner(
     Stone.X, init_value(), Victory,
-    alpha=CosineSchedule(m, 1e-2, 1e-4),
-    epsilon=CosineSchedule(m, 0.40, 0.01),
+    alpha=CosineSchedule(m, 2e-2, 1e-4),
+    epsilon=CosineSchedule(m, 0.50, 0.01),
 )
 p2 = Learner(
     Stone.O, init_value(), Victory,
-    alpha=CosineSchedule(m, 1e-2, 1e-4),
-    epsilon=CosineSchedule(m, 0.40, 0.01),
+    alpha=CosineSchedule(m, 2e-2, 1e-4),
+    epsilon=CosineSchedule(m, 0.50, 0.01),
 )
 
 
@@ -30,11 +30,11 @@ def rollout(players, arbiter):
         winner = game.evo(action)
         if winner:
             for player in players:
-                player.obs(winner, game.pre_state, game.state)
+                player.obs(winner, game.state)
             arbiter(winner)
             break
         else:
-            player.obs(winner, game.pre_state, game.state)
+            player.obs(winner, game.state)
 
 
 players = (p1, p2)

@@ -7,6 +7,8 @@ class Game:
 
     def __init__(self, players: tuple[Player, Player]):
         self.players = players
+        for player in players:
+            player.state = state_0
         self.round = 0
         self.winner = Stone._
         self.trajectory = [state_0]
@@ -18,10 +20,6 @@ class Game:
     @property
     def state(self) -> State:
         return self.trajectory[-1]
-
-    @property
-    def pre_state(self) -> State:
-        return self.trajectory[-2]
 
     def evo(self, action: State):
         assert not self.winner, "game is ended"
