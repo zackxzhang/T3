@@ -9,6 +9,7 @@ from t3.optim import CosineSchedule
 m = 50_000
 n = 80_000
 
+
 p1 = Learner(
     Stone.X, init_value(), Victory,
     alpha=CosineSchedule(m, 1e-2, 1e-4),
@@ -19,11 +20,9 @@ p2 = Learner(
     alpha=CosineSchedule(m, 1e-2, 1e-4),
     epsilon=CosineSchedule(m, 0.40, 0.01),
 )
-players = (p1, p2)
 
 
-arbiter = Arbiter()
-for _ in range(n):
+def rollout(players, arbiter):
     game = Game(players)
     while True:
         player = game.player
@@ -36,6 +35,12 @@ for _ in range(n):
             break
         else:
             player.obs(winner, game.pre_state, game.state)
+
+
+players = (p1, p2)
+arbiter = Arbiter()
+for _ in range(n):
+    rollout(players, arbiter)
 print(arbiter)
 
 
@@ -45,6 +50,7 @@ for player in players:
     for s in states_[:8] + states_[-8:]:
         print(plot(s))
         print(player.value[s])
+
 
 p1.save('p1.json')
 p2.save('p2.json')

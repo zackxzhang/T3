@@ -1,4 +1,3 @@
-import threading
 from .struct import Stone, State
 from .state import state_0, judge
 from .player import Player
@@ -35,7 +34,6 @@ class Game:
 class Arbiter:
 
     def __init__(self):
-        self.lock = threading.Lock()
         self.wins = [0, 0, 0]
 
     @property
@@ -43,15 +41,14 @@ class Arbiter:
         return sum(self.wins)
 
     def __call__(self, winner: Stone):
-        with self.lock:
-            if winner == Stone.X | Stone.O:
-                self.wins[0] += 1
-            elif winner == Stone.X:
-                self.wins[1] += 1
-            elif winner == Stone.O:
-                self.wins[2] += 1
-            else:
-                raise AttributeError('no winner yet')
+        if winner == Stone.X | Stone.O:
+            self.wins[0] += 1
+        elif winner == Stone.X:
+            self.wins[1] += 1
+        elif winner == Stone.O:
+            self.wins[2] += 1
+        else:
+            raise AttributeError('no winner yet')
 
     def __str__(self):
         return (
