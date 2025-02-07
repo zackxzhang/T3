@@ -2,10 +2,10 @@ import json
 import random
 from abc import ABC, abstractmethod
 from math import inf
-from .struct import Stone, State, Mode
+from .struct import Stone, State, Mode, Value
 from .state import states, transitions, judge
+from .value import encode_value, decode_value
 from .reward import Reward, decode_reward
-from .value import Value, encode_value, decode_value
 from .optim import Schedule, ConstantSchedule
 
 

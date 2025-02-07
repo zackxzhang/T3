@@ -9,7 +9,7 @@ class Reward(ABC):
 
     @abstractmethod
     def __call__(self, winner: Stone):
-        """winner -> reward"""
+        pass
 
 
 class Victory(Reward):

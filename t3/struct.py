@@ -16,7 +16,7 @@ class Stone(Flag):
 
 Board = list[list[Stone]]
 State = tuple[Stone, ...]
-
+Value = dict[State, float]
 
 Index = int
 Coord = tuple[int, int]
