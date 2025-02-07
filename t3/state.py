@@ -1,8 +1,11 @@
-import itertools, functools
+import functools
+import itertools
 from .struct import Stone, State, Board, Index, Coord
 
 
-states = list(itertools.product(*[list(Stone) for _ in range(9)]))
+states = list(itertools.product(
+    *[(Stone._, Stone.X, Stone.O) for _ in range(9)]
+))
 state_0 = tuple([Stone._ for _ in range(9)])
 
 
