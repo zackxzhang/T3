@@ -6,18 +6,18 @@ from t3.game import Game, Arbiter
 from t3.optim import CosineSchedule
 
 
-m = 50_000
-n = 80_000
+m = 500_000
+n = 800_000
 
 
 p1 = Learner(
     Stone.X, init_value(), Victory,
-    alpha=CosineSchedule(m, 2e-2, 1e-4),
+    alpha=CosineSchedule(m, 4e-2, 1e-3),
     epsilon=CosineSchedule(m, 0.50, 0.01),
 )
 p2 = Learner(
     Stone.O, init_value(), Victory,
-    alpha=CosineSchedule(m, 2e-2, 1e-4),
+    alpha=CosineSchedule(m, 4e-2, 1e-3),
     epsilon=CosineSchedule(m, 0.50, 0.01),
 )
 

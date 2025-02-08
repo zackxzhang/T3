@@ -3,8 +3,8 @@ from t3.player import Amateur, Learner
 from t3.game import Game, Arbiter
 
 
-p1 = Learner.load('best.p1.json').eval()
-p2 = Learner.load('best.p2.json').eval()
+p1 = Learner.load('p1.json').eval()
+p2 = Learner.load('p2.json').eval()
 p3 = Amateur(Stone.X)
 p4 = Amateur(Stone.O)
 
