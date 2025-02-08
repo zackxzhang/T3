@@ -1,7 +1,7 @@
 from t3.state import Stone, states, plot
 from t3.value import init_value
 from t3.reward import Victory, Survival
-from t3.player import Amateur, Learner
+from t3.agent import Amateur, Learner
 from t3.game import Game, Arbiter
 from t3.optim import CosineSchedule
 
@@ -10,47 +10,47 @@ m = 500_000
 n = 800_000
 
 
-p1 = Learner(
+a1 = Learner(
     Stone.X, init_value(), Victory,
     alpha=CosineSchedule(m, 4e-2, 1e-3),
     epsilon=CosineSchedule(m, 0.50, 0.01),
 )
-p2 = Learner(
+a2 = Learner(
     Stone.O, init_value(), Victory,
     alpha=CosineSchedule(m, 4e-2, 1e-3),
     epsilon=CosineSchedule(m, 0.50, 0.01),
 )
 
 
-def rollout(players, arbiter):
-    game = Game(players)
+def rollout(agents, arbiter):
+    game = Game(agents)
     while True:
-        player = game.player
-        action = player.act(game.state)
+        agent  = game.agent
+        action = agent.act(game.state)
         winner = game.evo(action)
         if winner:
-            for player in players:
-                player.obs(winner, game.state)
+            for agent in agents:
+                agent.obs(winner, game.state)
             arbiter(winner)
             break
         else:
-            player.obs(winner, game.state)
+            agent.obs(winner, game.state)
 
 
-players = (p1, p2)
+agents = (a1, a2)
 arbiter = Arbiter()
 for _ in range(n):
-    rollout(players, arbiter)
+    rollout(agents, arbiter)
 print(arbiter)
 
 
-for player in players:
+for agent in agents:
     print('-' * 32)
-    states_ = sorted(states, key=player.value.__getitem__)
-    for s in states_[:8] + states_[-8:]:
+    ss = sorted(states, key=agent.value.__getitem__)
+    for s in ss[:8] + ss[-8:]:
         print(plot(s))
-        print(player.value[s])
+        print(agent.value[s])
 
 
-p1.save('p1.json')
-p2.save('p2.json')
+a1.save('a1.json')
+a2.save('a2.json')

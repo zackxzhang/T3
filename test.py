@@ -1,31 +1,31 @@
 from t3.state import Stone
-from t3.player import Amateur, Learner
+from t3.agent import Amateur, Learner
 from t3.game import Game, Arbiter
 
 
-p1 = Learner.load('p1.json').eval()
-p2 = Learner.load('p2.json').eval()
-p3 = Amateur(Stone.X)
-p4 = Amateur(Stone.O)
+a1 = Learner.load('a1.json').eval()
+a2 = Learner.load('a2.json').eval()
+a3 = Amateur(Stone.X)
+a4 = Amateur(Stone.O)
 
 
-matches = ((p3, p4), (p1, p4), (p3, p2), (p1, p2))
+matches = ((a3, a4), (a1, a4), (a3, a2), (a1, a2))
 n = 10_000
 
 
-def rollout(players, arbiter):
-    game = Game(players)
+def rollout(agents, arbiter):
+    game = Game(agents)
     while True:
-        player = game.player
-        action = player.act(game.state)
+        agent  = game.agent
+        action = agent.act(game.state)
         winner = game.evo(action)
         if winner:
             arbiter(winner)
             break
 
 
-for players in matches:
+for agents in matches:
     arbiter = Arbiter()
     for _ in range(n):
-        rollout(players, arbiter)
+        rollout(agents, arbiter)
     print(arbiter)

@@ -9,19 +9,15 @@ from .reward import Reward, decode_reward
 from .optim import Schedule, ConstantSchedule
 
 
-class Player(ABC):
+class Agent(ABC):
 
-    def __init__(self, stone: Stone, *args, **kwargs):
+    def __init__(self, stone: Stone):
         self.stone = stone
         self.state: State
-        self.mode: Mode
-        self.alpha: Schedule
-        self.epsilon: Schedule
 
+    @abstractmethod
     def eval(self):
-        self.alpha = ConstantSchedule(0.)
-        self.epsilon = ConstantSchedule(0.)
-        return self
+        pass
 
     @abstractmethod
     def act(self, state: State) -> State:
@@ -32,10 +28,13 @@ class Player(ABC):
         pass
 
 
-class Amateur(Player):
+class Amateur(Agent):
 
     def __init__(self, stone: Stone):
         super().__init__(stone)
+
+    def eval(self):
+        return self
 
     def act(self, state: State) -> State:
         actions = transitions(state, self.stone)
@@ -43,10 +42,10 @@ class Amateur(Player):
         return action
 
     def obs(self, winner: Stone, state: State):
-        pass
+        self.state = state
 
 
-class Learner(Player):
+class Learner(Agent):
 
     def __init__(
         self,
@@ -62,6 +61,12 @@ class Learner(Player):
         self.gamma = 1
         self.alpha = alpha
         self.epsilon = epsilon
+        self.mode: Mode
+
+    def eval(self):
+        self.alpha = ConstantSchedule(0.)
+        self.epsilon = ConstantSchedule(0.)
+        return self
 
     def save(self, file):
         data = {
