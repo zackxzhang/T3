@@ -4,11 +4,10 @@
 
 ##### scaffold / setup
 - [x] state transition
-- [x] board pictorial
+- [x] value tabulation
 - [ ] user interface
 
 ##### reinforcement learning
-- [x] value tabulation
 - [x] reward shaping
 - [x] rate scheduling
 - [x] importance sampling
