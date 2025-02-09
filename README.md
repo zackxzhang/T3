@@ -5,7 +5,7 @@
 ##### scaffold / setup
 - [x] state transition
 - [x] value tabulation
-- [ ] user interface
+- [x] user interface
 
 ##### reinforcement learning
 - [x] reward shaping
