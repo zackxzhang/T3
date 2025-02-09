@@ -1,12 +1,31 @@
 import functools
 import itertools
-from .struct import Stone, State, Board, Index, Coord
+from enum import Flag
 
 
-states = list(itertools.product(
+class Stone(Flag):
+
+    _ = 0
+    X = 1
+    O = 2
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+
+Board = list[list[Stone]]
+State = tuple[Stone, ...]
+Index = int
+Coord = tuple[int, int]
+
+
+states: list[State] = list(itertools.product(
     *[(Stone._, Stone.X, Stone.O) for _ in range(9)]
 ))
-state_0 = tuple([Stone._ for _ in range(9)])
+s0 = tuple([Stone._ for _ in range(9)])
 
 
 def statify(board: Board) -> State:
@@ -23,14 +42,6 @@ def stringify(board: Board) -> str:
 
 def plot(state: State) -> str:
     return stringify(boardify(state))
-
-
-def encode_state(state: State) -> str:
-    return ''.join(map(str, state))
-
-
-def decode_state(string: str) -> State:
-    return tuple(map(Stone.__getitem__, string))
 
 
 def affordance(state: State) -> list[Index]:

@@ -1,5 +1,4 @@
-from .struct import Value
-from .state import states, encode_state, decode_state
+from .state import State, states
 
 
 # class Value(dict):
@@ -34,13 +33,7 @@ from .state import states, encode_state, decode_state
 #             return super().items()
 
 
-def init_value(constant: float = 0., random: bool = False) -> Value:
-    return {state: constant for state in states}
+class Value(dict[State, float]):
 
-
-def encode_value(value: Value) -> dict[str, float]:
-    return {encode_state(s): v for s, v in value.items()}
-
-
-def decode_value(json: dict[str, float]) -> Value:
-    return {decode_state(s): v for s, v in json.items()}
+    def __init__(self, data=None):
+        super().__init__(data if data else {state: 0. for state in states})

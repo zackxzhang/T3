@@ -1,12 +1,24 @@
 import json
 import random
 from abc import ABC, abstractmethod
+from enum import Flag
 from math import inf
-from .struct import Stone, State, Mode, Value
-from .state import states, transitions, judge
-from .value import encode_value, decode_value
-from .reward import Reward, decode_reward
+from .state import Stone, State, states, transitions, judge
+from .value import Value
+from .reward import Reward
 from .optim import Schedule, ConstantSchedule
+from .codec import (
+    encode_stone, decode_stone,
+    encode_state, decode_state,
+    encode_value, decode_value,
+    encode_reward, decode_reward,
+)
+
+
+class Mode(Flag):
+
+    EXPLORE = 1
+    EXPLOIT = 2
 
 
 class Agent(ABC):
@@ -70,9 +82,9 @@ class Learner(Agent):
 
     def save(self, file):
         data = {
-            'stone': str(self.stone),
+            'stone': encode_stone(self.stone),
             'value': encode_value(self.value),
-            'reward': self.reward.name,
+            'reward': encode_reward(self.reward),
         }
         with open(file, 'w') as f:
             json.dump(data, f)
@@ -81,7 +93,7 @@ class Learner(Agent):
     def load(cls, file):
         with open(file, 'r') as f:
             data = json.load(f)
-        stone = Stone[data['stone']]
+        stone = decode_stone(data['stone'])
         value = decode_value(data['value'])
         reward = decode_reward(data['reward'])
         return cls(stone, value, reward)
