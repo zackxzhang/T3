@@ -1,6 +1,4 @@
-from t3.state import Stone
-from t3.agent import Amateur, Learner
-from t3.game import Game, Arbiter
+from t3 import Stone, Amateur, Learner, Game, Arbiter
 
 
 a1 = Learner.load('a1.json').eval()

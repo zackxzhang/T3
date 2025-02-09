@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
-from t3.struct import Stone, State, Index, Coord
-from t3.state import state_0, transition, boardify, judge
-from t3.agent import Agent, Learner
+from t3 import Stone, State, Agent, Learner
+from t3.state import Index, Coord, s0, transition, boardify, judge
 
 
 def ij2k(ij: Coord) -> Index:
@@ -33,7 +32,7 @@ class TicTacToe:
             self.players = (agent, human)
         self.round = 0
         self.winner = Stone._
-        self.trajectory = [state_0]
+        self.trajectory = [s0]
 
     @property
     def player(self):
