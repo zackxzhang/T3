@@ -22,7 +22,8 @@ class Game:
         return self.trajectory[-1]
 
     def evo(self, action: State):
-        assert not self.winner, "game is ended"
+        if self.winner:
+            raise ValueError('game over')
         self.trajectory.append(action)
         self.winner = judge(action)
         self.round += 1
@@ -46,7 +47,7 @@ class Arbiter:
         elif winner == Stone.O:
             self.wins[2] += 1
         else:
-            raise AttributeError('no winner yet')
+            raise ValueError('game not over yet')
 
     def __str__(self):
         return (
