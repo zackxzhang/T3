@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
-from .struct import Stone
+from .state import Stone
 
 
 class Reward(ABC):
+
+    name: str
 
     def __init__(self, stone: Stone):
         self.stone = stone
@@ -27,9 +29,9 @@ class Victory(Reward):
             return 0
 
 
-class SwiftVictory(Reward):
+class Rush(Reward):
 
-    name = 'swift-victory'
+    name = 'rush'
 
     def __call__(self, winner: Stone) -> int:
         if winner == self.stone:
@@ -55,15 +57,3 @@ class Survival(Reward):
             return +1
         else:
             return 0
-
-
-def decode_reward(name: str) -> type[Reward]:
-    match name:
-        case 'victory':
-            return Victory
-        case 'swift-victory':
-            return SwiftVictory
-        case 'survival':
-            return Survival
-        case _:
-            raise ValueError(f'no reward function named {name}')

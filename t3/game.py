@@ -1,5 +1,4 @@
-from .struct import Stone, State
-from .state import state_0, judge
+from .state import Stone, State, s0, judge
 from .agent import Agent
 
 
@@ -8,10 +7,10 @@ class Game:
     def __init__(self, agents: tuple[Agent, Agent]):
         self.agents = agents
         for agent in agents:
-            agent.state = state_0
+            agent.state = s0
         self.round = 0
         self.winner = Stone._
-        self.trajectory = [state_0]
+        self.trajectory = [s0]
 
     @property
     def agent(self) -> Agent:
