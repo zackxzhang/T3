@@ -44,18 +44,15 @@ def plot(state: State) -> str:
     return stringify(boardify(state))
 
 
-def affordance(state: State) -> list[Index]:
-    return [k for k, e in enumerate(state) if not e]
-
-
 def transition(state: State, stone: Stone, k: Index) -> State:
     s = list(state)
     s[k] = stone
     return tuple(s)
 
 
-def transitions(state: State, stone: Stone) -> list[State]:
-    return [transition(state, stone, k) for k in affordance(state)]
+def affordance(state: State, stone: Stone) -> list[State]:
+    ks = [k for k, e in enumerate(state) if not e]
+    return [transition(state, stone, k) for k in ks]
 
 
 def victorious(state: State, stone: Stone) -> bool:

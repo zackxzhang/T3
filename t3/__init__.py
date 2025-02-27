@@ -4,3 +4,6 @@ from .reward import Victory, Rush, Survival
 from .agent import Agent, Amateur, Learner
 from .game import Game, Arbiter
 from .optim import ConstantSchedule, LinearSchedule, CosineSchedule
+
+
+__version__ = '1.0.0'

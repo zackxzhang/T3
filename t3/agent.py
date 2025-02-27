@@ -3,7 +3,7 @@ import random
 from abc import ABC, abstractmethod
 from enum import Flag
 from math import inf
-from .state import Stone, State, states, transitions, judge
+from .state import Stone, State, states, affordance, judge
 from .value import Value
 from .reward import Reward
 from .optim import Schedule, ConstantSchedule
@@ -49,7 +49,7 @@ class Amateur(Agent):
         return self
 
     def act(self, state: State) -> State:
-        actions = transitions(state, self.stone)
+        actions = affordance(state, self.stone)
         action = random.choice(actions)
         return action
 
@@ -111,7 +111,7 @@ class Learner(Agent):
         return action
 
     def act(self, state: State) -> State:
-        actions = transitions(state, self.stone)
+        actions = affordance(state, self.stone)
         if random.uniform(0, 1) < self.epsilon():
             self.mode = Mode.EXPLORE
             action = random.choice(actions)
