@@ -1,6 +1,9 @@
 # T3
-*reinforcement learning for tic tac toe*
+[![Language](https://img.shields.io/github/languages/top/zackxzhang/T3)](https://github.com/zackxzhang/T3)
+[![License](https://img.shields.io/github/license/zackxzhang/T3)](https://opensource.org/licenses/BSD-3-Clause)
+[![Last Commit](https://img.shields.io/github/last-commit/zackxzhang/T3)](https://github.com/zackxzhang/T3)
 
+*reinforcement learning for tic tac toe*
 
 ##### scaffolding
 - [x] state transition
