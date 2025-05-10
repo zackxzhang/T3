@@ -69,9 +69,9 @@ class TicTacToeUI:
                 button = tk.Button(
                     self.root,
                     text=' ',
-                    font=('Helvetica', 20),
-                    width=5,
-                    height=2,
+                    font=('Helvetica', 24),
+                    width=8,
+                    height=4,
                     command=lambda row=i, col=j: self.on_click(row, col)
                 )
                 button.grid(row=i, column=j)
@@ -106,6 +106,7 @@ class TicTacToeUI:
             action = transition(state, stone, k)
             winner = self.game.evo(action)
             self.buttons[row][col].config(text=str(stone))
+            self.root.update_idletasks()
             if winner:
                 self.signal(winner)
                 self.reset()
@@ -121,6 +122,7 @@ class TicTacToeUI:
             for j in range(3):
                 if board[i][j]:
                     self.buttons[i][j].config(text=str(board[i][j]))
+        self.root.update_idletasks()
         if winner:
             self.signal(winner)
             self.reset()
